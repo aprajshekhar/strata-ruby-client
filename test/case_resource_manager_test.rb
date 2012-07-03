@@ -9,6 +9,8 @@ require 'pp'
 
 class CaseResourceManagerTest < Test::Unit::TestCase
   def setup
+    #This URL is to test locally
+    #add username and password before running the test
     @manager = Client::CaseResourceManager.new("http://127.0.0.1:8080/rs/cases/", "", "")
   end
   def test_get_by_id
