@@ -1,1 +1,5 @@
 Ruby client for Strata API
+
+Installing required gems
+-cd strata-ruby-client
+-bundle install
