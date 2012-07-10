@@ -4,17 +4,43 @@ require 'rest_client'
 require 'pp'
 require 'active_support'
 require 'hashie/mash'
-
+require 'json'
 module Client
-  #This class can be instantiated to access case resource of strata-api 
+=begin
+= SYNOPSIS
+    A wrapper class for a Case resource.
+= DESCRIPTION
+    The functionalities provided are
+==
+    1. get case by Id
+    2. list case - the query params can be details=true/false, include_closed=true/false, start_date, end_date and start_date..end_date
+    3. create case
+    4. update a case
+    5. create comment
+    
+    To use this class
+    1. Instantiate the class e.g manager = Client::CaseResourceManager.new(url, user_name, password)
+                                   where url is the url of the host
+    2. Call the required method e.g. kase = manger.get_by_id('00123000')
+    3. The objects returned by get and list methods are Hashie objects i.e. hashes that can be used as objects
+=end
+          
 
   class CaseResourceManager
-
-    def initialize(url, user, password)
-      @site = RestClient::Resource.new(url,:user=>user, :password=>password, :timeout=>1000 )
-    end
+    CASE_URI = '/rs/cases/'
+    COMMENTS_URI = '/comments/'
     
-    #Gets case by id
+    def initialize(url, user, password)
+      rest_url = url+CASE_URI
+      @site = RestClient::Resource.new(rest_url,:user=>user, :password=>password, :timeout=>1000 )
+    end
+
+=begin
+= SYNOPSIS
+ Returns the case for the specified <code>id</code>   
+ 
+=end    
+    
     def get_by_id(id)
       response = @site[id].get :accept=>'application/json'
       case_str = response.to_s
@@ -47,7 +73,27 @@ module Client
         return case_str
       end
     end
-
+    
+    def create(kase={})
+      str = kase.to_json
+      puts str
+      response = @site.post str, :content_type=>'application/json', :accept=>'application/xml'
+      return response
+    end
+    
+    def update(kase={}, id)
+      str = kase.to_json
+      puts str
+      response = @site[id].put str, :content_type=>'application/json', :accept=>'application/xml'
+      return response
+    end
+    
+    def add_comment(comment={}, case_id)
+      str = comment.to_json
+      response = @site[case_id+COMMENTS_URI].post str, :content_type=>'application/json', :accept=>'application/xml'
+      return response
+    end
+    
     private
     def build_query_param(options={})
       query_param = ''

@@ -1,0 +1,6 @@
+## YAML Template.
+##For testing on local machine
+local:
+  url: http://127.0.0.1:8080
+  user: 
+  password: 
