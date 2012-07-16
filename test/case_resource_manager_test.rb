@@ -62,4 +62,9 @@ class CaseResourceManagerTest < Test::Unit::TestCase
     puts response
   end
   
+  def test_list_comment
+    puts'==========test list comment by detail'
+    kase = @manager.list_comments({:detail=>'true'},'00722685')
+  end
+  
 end
