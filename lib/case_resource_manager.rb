@@ -6,6 +6,7 @@ require 'active_support'
 require 'hashie/mash'
 require 'connection_pool'
 require 'json'
+require 'logging'
 module Client
 =begin
 = SYNOPSIS
@@ -25,7 +26,8 @@ module Client
     2. Call the required method e.g. kase = manger.get_by_id('00123000')
     3. The objects returned by get and list methods are Hashie objects i.e. hashes that can be used as objects
 =end
-          
+ Logging.logger.root.appenders = Logging.appenders.stdout
+ Logging.logger.root.level = :info         
 
   class CaseResourceManager
     CASE_URI = '/rs/cases/'
@@ -36,6 +38,7 @@ module Client
       @memcached= ConnectionPool.new(:size=>5, :timeout=>10){
         RestClient::Resource.new(rest_url,:user=>user, :password=>password, :timeout=>1000 )
       }
+      @log = Logging.logger[self]
     end
 
 =begin
@@ -65,8 +68,8 @@ module Client
           accept = 'application/json'
         end
         
-        puts 'query param:'+query_param
-        puts accept
+        @log.info 'query param:'+query_param
+        @log.info 'accept: '+ accept
         
         response = site[query_param].get :accept=>accept
         
@@ -146,6 +149,14 @@ module Client
              
          
       end
+    end
+    
+    def add_attachment(case_no,attachment_path, is_private=false )
+      @memcached.with_connection do |site|
+        response = site[case_no+'/attachments'].post :file => File.new(attachment_path, 'rb'), :accept=>'application/json'
+        return response
+      end
+      
     end
     
     private
