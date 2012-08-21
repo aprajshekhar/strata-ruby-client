@@ -23,7 +23,7 @@ module Client
     To use this class
     1. Instantiate the class e.g manager = Client::CaseResourceManager.new(url, user_name, password)
                                    where url is the url of the host
-    2. Call the required method e.g. kase = manger.get_by_id('00123000')
+    2. Call the required method e.g. kase = manager.get_by_id('00123000')
     3. The objects returned by get and list methods are Hashie objects i.e. hashes that can be used as objects
 =end
  Logging.logger.root.appenders = Logging.appenders.stdout
@@ -159,12 +159,36 @@ module Client
       
     end
     
+    def get_attachment(case_no,uuid )
+      @memcached.with_connection do |site|
+        response = site[case_no+'/attachments/'+uuid].get :accept=>'application/octet-stream'
+        return response
+      end
+      
+    end
+    
+    def list_attachments(options={},case_no)
+      @memcached.with_connection do |site|
+        query_param = build_query_param(options)
+         
+        @log.info 'query param:'+query_param         
+         
+        response = site[case_no+'/attachments'+query_param].get :accept=>'application/json'
+         
+        attachments_str = response.to_s
+        attachments_hash = ActiveSupport::JSON.decode attachments_str
+        attachments = Hashie::Mash.new(attachments_hash)
+        return attachments            
+         
+      end
+    end
+    
     private
     def build_query_param(options={}, for_comments=false)
       query_param = ''
 
       query_param = '?group='+options[:group][:param] unless options[:group].nil?
-      query_param = '?detail='+options[:detail] unless options[:details].nil?      
+      query_param = '?detail='+options[:detail] unless options[:detail].nil?      
       
       if for_comments
         #noting to be done at present
