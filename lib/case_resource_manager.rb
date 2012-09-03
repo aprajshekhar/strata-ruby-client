@@ -58,7 +58,16 @@ module Client
         
       end
     end
-
+=begin
+= SYNOPSIS
+ Returns list of cases based on  <code>options/code>   
+ The options can be
+ 1. start_date
+ 2. end_date
+ 3. include_closed (values can be true/false)
+ 4. group (values can be ALL, NONE OR the ID of the group)
+ 5. details (values can be true/false)
+=end   
     def list(options={}, csv_output=false)
       @memcached.with_connection do |site|
         query_param = build_query_param(options)
