@@ -1,5 +1,8 @@
 require 'xsd/qname'
 
+module Client; module Model
+
+
 # {http://www.redhat.com/gss/strata}strataEntity
 # abstract
 class StrataEntity
@@ -95,8 +98,8 @@ end
 
 # {http://www.redhat.com/gss/strata}problems
 #   source - SOAP::SOAPString
-#   link - Link
-#   problem - Problem
+#   link - Client::Model::Link
+#   problem - Client::Model::Problem
 class Problems
   attr_accessor :source
   attr_accessor :link
@@ -111,7 +114,7 @@ end
 
 # {http://www.redhat.com/gss/strata}problem
 #   source - SOAP::SOAPString
-#   link - Link
+#   link - Client::Model::Link
 class Problem
   attr_accessor :source
   attr_accessor :link
@@ -135,7 +138,7 @@ end
 #   createdDate - SOAP::SOAPDateTime
 #   lastModifiedBy - SOAP::SOAPString
 #   lastModifiedDate - SOAP::SOAPDateTime
-#   solution - SqiRating::Solution
+#   solution - Client::Model::SqiRating::Solution
 #   completeTitle - SOAP::SOAPInteger
 #   adheresToContentStandard - SOAP::SOAPInteger
 #   accuratelyReflectsProblem - SOAP::SOAPInteger
@@ -218,18 +221,18 @@ end
 #   authorSSOName - SOAP::SOAPString
 #   lastModifiedBySSOName - SOAP::SOAPString
 #   language - SOAP::SOAPString
-#   issue - Solution::Issue
-#   environment - Solution::Environment
-#   resolution - Solution::Resolution
-#   rootCause - Solution::RootCause
-#   internalDiagnosticSteps - Solution::InternalDiagnosticSteps
+#   issue - Client::Model::Solution::Issue
+#   environment - Client::Model::Solution::Environment
+#   resolution - Client::Model::Solution::Resolution
+#   rootCause - Client::Model::Solution::RootCause
+#   internalDiagnosticSteps - Client::Model::Solution::InternalDiagnosticSteps
 #   externalDiagnosticSteps - SOAP::SOAPString
 #   summary - SOAP::SOAPString
 #   tags - SOAP::SOAPString
 #   m_case - SOAP::SOAPAnyURI
-#   tag - Solution::Tag
+#   tag - Client::Model::Solution::Tag
 #   published - SOAP::SOAPBoolean
-#   duplicateOf - Solution::DuplicateOf
+#   duplicateOf - Client::Model::Solution::DuplicateOf
 #   kcsState - SOAP::SOAPString
 #   moderationState - SOAP::SOAPString
 class Solution < TrackedEntity
@@ -429,18 +432,18 @@ end
 #   authorSSOName - SOAP::SOAPString
 #   lastModifiedBySSOName - SOAP::SOAPString
 #   language - SOAP::SOAPString
-#   issue - Article::Issue
-#   environment - Article::Environment
-#   resolution - Article::Resolution
-#   rootCause - Article::RootCause
-#   internalDiagnosticSteps - Article::InternalDiagnosticSteps
+#   issue - Client::Model::Article::Issue
+#   environment - Client::Model::Article::Environment
+#   resolution - Client::Model::Article::Resolution
+#   rootCause - Client::Model::Article::RootCause
+#   internalDiagnosticSteps - Client::Model::Article::InternalDiagnosticSteps
 #   externalDiagnosticSteps - SOAP::SOAPString
 #   summary - SOAP::SOAPString
 #   tags - SOAP::SOAPString
 #   m_case - SOAP::SOAPAnyURI
-#   tag - Article::Tag
+#   tag - Client::Model::Article::Tag
 #   published - SOAP::SOAPBoolean
-#   duplicateOf - Article::DuplicateOf
+#   duplicateOf - Client::Model::Article::DuplicateOf
 #   kcsState - SOAP::SOAPString
 #   body - SOAP::SOAPString
 class Article < TrackedEntity
@@ -727,7 +730,7 @@ class Source < ::String
 end
 
 # {http://www.redhat.com/gss/strata}attachments
-#   attachment - Attachment
+#   attachment - Client::Model::Attachment
 class Attachments < StrataEntity
   attr_accessor :attachment
 
@@ -808,7 +811,7 @@ class Attachment < TrackedEntity
 end
 
 # {http://www.redhat.com/gss/strata}suggestions
-#   suggestion - Suggestion
+#   suggestion - Client::Model::Suggestion
 class Suggestions < StrataEntity
   attr_accessor :suggestion
 
@@ -918,7 +921,7 @@ class Suggestion < TrackedEntity
 end
 
 # {http://www.redhat.com/gss/strata}groups
-#   group - Group
+#   group - Client::Model::Group
 class Groups < StrataEntity
   attr_accessor :group
 
@@ -973,7 +976,7 @@ class Account < StrataEntity
 end
 
 # {http://www.redhat.com/gss/strata}users
-#   user - User
+#   user - Client::Model::User
 class Users < StrataEntity
   attr_accessor :user
 
@@ -1055,7 +1058,7 @@ class User < StrataEntity
 end
 
 # {http://www.redhat.com/gss/strata}cases
-#   m_case - Case
+#   m_case - Client::Model::Case
 class Cases < StrataEntity
   def m_case
     @v_case
@@ -1099,10 +1102,10 @@ end
 #   suppliedEmail - SOAP::SOAPString
 #   severity - SOAP::SOAPString
 #   folderNumber - SOAP::SOAPString
-#   comments - Comments
-#   notified_users - Notified_users
-#   entitlement - Entitlement
-#   solutions - Solutions
+#   comments - Client::Model::Comments
+#   notified_users - Client::Model::Notified_users
+#   entitlement - Client::Model::Entitlement
+#   solutions - Client::Model::Solutions
 #   xmlattr_caseNumber - SOAP::SOAPString
 #   xmlattr_closed - SOAP::SOAPBoolean
 #   xmlattr_alternateId - SOAP::SOAPString
@@ -1210,7 +1213,7 @@ class Case < TrackedEntity
 end
 
 # {http://www.redhat.com/gss/strata}comments
-#   comment - Comment
+#   comment - Client::Model::Comment
 class Comments < StrataEntity
   attr_accessor :comment
 
@@ -1280,7 +1283,7 @@ class Comment < TrackedEntity
 end
 
 # {http://www.redhat.com/gss/strata}notified_users
-#   link - Link
+#   link - Client::Model::Link
 class Notified_users < StrataEntity
   attr_accessor :link
 
@@ -1344,7 +1347,7 @@ class Values < ::Array
 end
 
 # {http://www.redhat.com/gss/strata}entitlements
-#   entitlement - Entitlement
+#   entitlement - Client::Model::Entitlement
 class Entitlements < StrataEntity
   attr_accessor :entitlement
 
@@ -1410,7 +1413,7 @@ class Error
 end
 
 # {http://www.redhat.com/gss/strata}systemProfiles
-#   systemProfile - SystemProfile
+#   systemProfile - Client::Model::SystemProfile
 class SystemProfiles < StrataEntity
   attr_accessor :systemProfile
 
@@ -1429,7 +1432,7 @@ end
 #   attachmentHash - SOAP::SOAPString
 #   deprecated - SOAP::SOAPBoolean
 #   hash - SOAP::SOAPString
-#   systemProfileCategory - SystemProfileCategory
+#   systemProfileCategory - Client::Model::SystemProfileCategory
 class SystemProfile < TrackedEntity
   attr_accessor :createdBy
   attr_accessor :createdDate
@@ -1458,7 +1461,7 @@ end
 
 # {http://www.redhat.com/gss/strata}SystemProfileCategory
 #   systemProfileCategoryName - SOAP::SOAPString
-#   systemProfileCategoryDetails - SystemProfileCategoryDetails
+#   systemProfileCategoryDetails - Client::Model::SystemProfileCategoryDetails
 class SystemProfileCategory
   attr_accessor :systemProfileCategoryName
   attr_accessor :systemProfileCategoryDetails
@@ -1481,3 +1484,6 @@ class SystemProfileCategoryDetails
     @value = value
   end
 end
+
+
+end; end

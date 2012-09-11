@@ -1,12 +1,14 @@
 require 'xsd/mapping'
 require_relative 'client/model/strata.rb'
 
+module Client; module Model
+
 module ClientModelStrataMappingRegistry
   NsStrata = "http://www.redhat.com/gss/strata"
   Registry = ::SOAP::Mapping::LiteralRegistry.new
 
   Registry.register(
-    :class => Base_link,
+    :class => Client::Model::Base_link,
     :schema_type => XSD::QName.new(NsStrata, "base_link"),
     :schema_basetype => XSD::QName.new(NsStrata, "strataEntity"),
     :schema_element => [
@@ -22,49 +24,49 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Problems,
+    :class => Client::Model::Problems,
     :schema_name => XSD::QName.new(NsStrata, "problems"),
     :schema_element => [ :choice,
       ["source", "SOAP::SOAPString[]", [0, 1]],
-      ["link", "Link[]"],
-      ["problem", "Problem[]"]
+      ["link", "Client::Model::Link[]"],
+      ["problem", "Client::Model::Problem[]"]
     ]
   )
 
   Registry.register(
-    :class => Problem,
+    :class => Client::Model::Problem,
     :schema_name => XSD::QName.new(NsStrata, "problem"),
     :schema_element => [ :choice,
       ["source", "SOAP::SOAPString[]", [0, 1]],
-      ["link", "Link[]"]
+      ["link", "Client::Model::Link[]"]
     ]
   )
 
   Registry.register(
-    :class => Solutions,
+    :class => Client::Model::Solutions,
     :schema_name => XSD::QName.new(NsStrata, "solutions"),
     :schema_element => [
-      ["solution", "Solution[]", [0, nil]]
+      ["solution", "Client::Model::Solution[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Articles,
+    :class => Client::Model::Articles,
     :schema_name => XSD::QName.new(NsStrata, "articles"),
     :schema_element => [
-      ["article", "Article[]", [0, nil]]
+      ["article", "Client::Model::Article[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => SqiRating,
+    :class => Client::Model::SqiRating,
     :schema_name => XSD::QName.new(NsStrata, "sqiRating"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
       ["createdDate", "SOAP::SOAPDateTime", [0, 1]],
       ["lastModifiedBy", "SOAP::SOAPString", [0, 1]],
       ["lastModifiedDate", "SOAP::SOAPDateTime", [0, 1]],
-      ["solution", "SqiRating::Solution"],
+      ["solution", "Client::Model::SqiRating::Solution"],
       ["completeTitle", "SOAP::SOAPInteger"],
       ["adheresToContentStandard", "SOAP::SOAPInteger"],
       ["accuratelyReflectsProblem", "SOAP::SOAPInteger"],
@@ -75,7 +77,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => SqiRating::Solution,
+    :class => Client::Model::SqiRating::Solution,
     :schema_name => XSD::QName.new(NsStrata, "solution"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -86,7 +88,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Solution,
+    :class => Client::Model::Solution,
     :schema_name => XSD::QName.new(NsStrata, "solution"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -101,25 +103,25 @@ module ClientModelStrataMappingRegistry
       ["authorSSOName", "SOAP::SOAPString", [0, 1]],
       ["lastModifiedBySSOName", "SOAP::SOAPString", [0, 1]],
       ["language", "SOAP::SOAPString", [0, 1]],
-      ["issue", "Solution::Issue", [0, 1]],
-      ["environment", "Solution::Environment", [0, 1]],
-      ["resolution", "Solution::Resolution", [0, 1]],
-      ["rootCause", "Solution::RootCause", [0, 1]],
-      ["internalDiagnosticSteps", "Solution::InternalDiagnosticSteps", [0, 1]],
+      ["issue", "Client::Model::Solution::Issue", [0, 1]],
+      ["environment", "Client::Model::Solution::Environment", [0, 1]],
+      ["resolution", "Client::Model::Solution::Resolution", [0, 1]],
+      ["rootCause", "Client::Model::Solution::RootCause", [0, 1]],
+      ["internalDiagnosticSteps", "Client::Model::Solution::InternalDiagnosticSteps", [0, 1]],
       ["externalDiagnosticSteps", "SOAP::SOAPString", [0, 1]],
       ["summary", "SOAP::SOAPString", [0, 1]],
       ["tags", "SOAP::SOAPString[]", [0, nil]],
       ["v_case", ["SOAP::SOAPAnyURI[]", XSD::QName.new(NsStrata, "case")], [0, nil]],
-      ["tag", "Solution::Tag[]", [0, nil]],
+      ["tag", "Client::Model::Solution::Tag[]", [0, nil]],
       ["published", "SOAP::SOAPBoolean", [0, 1]],
-      ["duplicateOf", "Solution::DuplicateOf[]", [0, nil]],
+      ["duplicateOf", "Client::Model::Solution::DuplicateOf[]", [0, nil]],
       ["kcsState", "SOAP::SOAPString", [0, 1]],
       ["moderationState", ["SOAP::SOAPString", XSD::QName.new(NsStrata, "ModerationState")], [0, 1]]
     ]
   )
 
   Registry.register(
-    :class => Solution::Issue,
+    :class => Client::Model::Solution::Issue,
     :schema_name => XSD::QName.new(NsStrata, "issue"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -130,7 +132,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Solution::Environment,
+    :class => Client::Model::Solution::Environment,
     :schema_name => XSD::QName.new(NsStrata, "environment"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -141,7 +143,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Solution::Resolution,
+    :class => Client::Model::Solution::Resolution,
     :schema_name => XSD::QName.new(NsStrata, "resolution"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -152,7 +154,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Solution::RootCause,
+    :class => Client::Model::Solution::RootCause,
     :schema_name => XSD::QName.new(NsStrata, "rootCause"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -163,7 +165,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Solution::InternalDiagnosticSteps,
+    :class => Client::Model::Solution::InternalDiagnosticSteps,
     :schema_name => XSD::QName.new(NsStrata, "internalDiagnosticSteps"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -174,7 +176,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Solution::Tag,
+    :class => Client::Model::Solution::Tag,
     :schema_name => XSD::QName.new(NsStrata, "tag"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -185,7 +187,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Solution::DuplicateOf,
+    :class => Client::Model::Solution::DuplicateOf,
     :schema_name => XSD::QName.new(NsStrata, "duplicateOf"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -196,7 +198,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Article,
+    :class => Client::Model::Article,
     :schema_name => XSD::QName.new(NsStrata, "article"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -211,25 +213,25 @@ module ClientModelStrataMappingRegistry
       ["authorSSOName", "SOAP::SOAPString", [0, 1]],
       ["lastModifiedBySSOName", "SOAP::SOAPString", [0, 1]],
       ["language", "SOAP::SOAPString", [0, 1]],
-      ["issue", "Article::Issue", [0, 1]],
-      ["environment", "Article::Environment", [0, 1]],
-      ["resolution", "Article::Resolution", [0, 1]],
-      ["rootCause", "Article::RootCause", [0, 1]],
-      ["internalDiagnosticSteps", "Article::InternalDiagnosticSteps", [0, 1]],
+      ["issue", "Client::Model::Article::Issue", [0, 1]],
+      ["environment", "Client::Model::Article::Environment", [0, 1]],
+      ["resolution", "Client::Model::Article::Resolution", [0, 1]],
+      ["rootCause", "Client::Model::Article::RootCause", [0, 1]],
+      ["internalDiagnosticSteps", "Client::Model::Article::InternalDiagnosticSteps", [0, 1]],
       ["externalDiagnosticSteps", "SOAP::SOAPString", [0, 1]],
       ["summary", "SOAP::SOAPString", [0, 1]],
       ["tags", "SOAP::SOAPString[]", [0, nil]],
       ["v_case", ["SOAP::SOAPAnyURI[]", XSD::QName.new(NsStrata, "case")], [0, nil]],
-      ["tag", "Article::Tag[]", [0, nil]],
+      ["tag", "Client::Model::Article::Tag[]", [0, nil]],
       ["published", "SOAP::SOAPBoolean", [0, 1]],
-      ["duplicateOf", "Article::DuplicateOf[]", [0, nil]],
+      ["duplicateOf", "Client::Model::Article::DuplicateOf[]", [0, nil]],
       ["kcsState", "SOAP::SOAPString", [0, 1]],
       ["body", "SOAP::SOAPString", [0, 1]]
     ]
   )
 
   Registry.register(
-    :class => Article::Issue,
+    :class => Client::Model::Article::Issue,
     :schema_name => XSD::QName.new(NsStrata, "issue"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -240,7 +242,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Article::Environment,
+    :class => Client::Model::Article::Environment,
     :schema_name => XSD::QName.new(NsStrata, "environment"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -251,7 +253,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Article::Resolution,
+    :class => Client::Model::Article::Resolution,
     :schema_name => XSD::QName.new(NsStrata, "resolution"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -262,7 +264,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Article::RootCause,
+    :class => Client::Model::Article::RootCause,
     :schema_name => XSD::QName.new(NsStrata, "rootCause"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -273,7 +275,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Article::InternalDiagnosticSteps,
+    :class => Client::Model::Article::InternalDiagnosticSteps,
     :schema_name => XSD::QName.new(NsStrata, "internalDiagnosticSteps"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -284,7 +286,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Article::Tag,
+    :class => Client::Model::Article::Tag,
     :schema_name => XSD::QName.new(NsStrata, "tag"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -295,7 +297,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Article::DuplicateOf,
+    :class => Client::Model::Article::DuplicateOf,
     :schema_name => XSD::QName.new(NsStrata, "duplicateOf"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -306,7 +308,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Link,
+    :class => Client::Model::Link,
     :schema_name => XSD::QName.new(NsStrata, "link"),
     :schema_element => [
       ["value", "SOAP::SOAPString", [0, 1]]
@@ -322,7 +324,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Source,
+    :class => Client::Model::Source,
     :schema_name => XSD::QName.new(NsStrata, "source"),
     :schema_attribute => {
       XSD::QName.new(nil, "name") => "SOAP::SOAPString"
@@ -330,15 +332,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Attachments,
+    :class => Client::Model::Attachments,
     :schema_name => XSD::QName.new(NsStrata, "attachments"),
     :schema_element => [
-      ["attachment", "Attachment[]", [0, nil]]
+      ["attachment", "Client::Model::Attachment[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Attachment,
+    :class => Client::Model::Attachment,
     :schema_name => XSD::QName.new(NsStrata, "attachment"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -364,15 +366,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Suggestions,
+    :class => Client::Model::Suggestions,
     :schema_name => XSD::QName.new(NsStrata, "suggestions"),
     :schema_element => [
-      ["suggestion", "Suggestion[]", [0, nil]]
+      ["suggestion", "Client::Model::Suggestion[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Suggestion,
+    :class => Client::Model::Suggestion,
     :schema_name => XSD::QName.new(NsStrata, "suggestion"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -410,15 +412,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Groups,
+    :class => Client::Model::Groups,
     :schema_name => XSD::QName.new(NsStrata, "groups"),
     :schema_element => [
-      ["group", "Group[]", [0, nil]]
+      ["group", "Client::Model::Group[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Group,
+    :class => Client::Model::Group,
     :schema_name => XSD::QName.new(NsStrata, "group"),
     :schema_element => [
       ["number", "SOAP::SOAPString"],
@@ -429,7 +431,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Account,
+    :class => Client::Model::Account,
     :schema_name => XSD::QName.new(NsStrata, "account"),
     :schema_element => [
       ["hasGroupACLs", "SOAP::SOAPBoolean", [0, 1]]
@@ -440,15 +442,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Users,
+    :class => Client::Model::Users,
     :schema_name => XSD::QName.new(NsStrata, "users"),
     :schema_element => [
-      ["user", "User[]", [0, nil]]
+      ["user", "Client::Model::User[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => User,
+    :class => Client::Model::User,
     :schema_name => XSD::QName.new(NsStrata, "user"),
     :schema_element => [
       ["id", "SOAP::SOAPString"],
@@ -472,15 +474,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Cases,
+    :class => Client::Model::Cases,
     :schema_name => XSD::QName.new(NsStrata, "cases"),
     :schema_element => [
-      ["v_case", ["Case[]", XSD::QName.new(NsStrata, "case")], [0, nil]]
+      ["v_case", ["Client::Model::Case[]", XSD::QName.new(NsStrata, "case")], [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Case,
+    :class => Client::Model::Case,
     :schema_name => XSD::QName.new(NsStrata, "case"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -511,10 +513,10 @@ module ClientModelStrataMappingRegistry
       ["suppliedEmail", "SOAP::SOAPString", [0, 1]],
       ["severity", "SOAP::SOAPString", [0, 1]],
       ["folderNumber", "SOAP::SOAPString", [0, 1]],
-      ["comments", "Comments", [0, 1]],
-      ["notified_users", "Notified_users", [0, 1]],
-      ["entitlement", "Entitlement"],
-      ["solutions", "Solutions"]
+      ["comments", "Client::Model::Comments", [0, 1]],
+      ["notified_users", "Client::Model::Notified_users", [0, 1]],
+      ["entitlement", "Client::Model::Entitlement"],
+      ["solutions", "Client::Model::Solutions"]
     ],
     :schema_attribute => {
       XSD::QName.new(nil, "caseNumber") => "SOAP::SOAPString",
@@ -524,15 +526,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Comments,
+    :class => Client::Model::Comments,
     :schema_name => XSD::QName.new(NsStrata, "comments"),
     :schema_element => [
-      ["comment", "Comment[]", [0, nil]]
+      ["comment", "Client::Model::Comment[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Comment,
+    :class => Client::Model::Comment,
     :schema_name => XSD::QName.new(NsStrata, "comment"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -552,23 +554,23 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Notified_users,
+    :class => Client::Model::Notified_users,
     :schema_name => XSD::QName.new(NsStrata, "notified_users"),
     :schema_element => [
-      ["link", "Link[]", [0, nil]]
+      ["link", "Client::Model::Link[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Products,
+    :class => Client::Model::Products,
     :schema_name => XSD::QName.new(NsStrata, "products"),
     :schema_element => [
-      ["product", "Product[]", [0, nil]]
+      ["product", "Client::Model::Product[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Product,
+    :class => Client::Model::Product,
     :schema_name => XSD::QName.new(NsStrata, "product"),
     :schema_element => [
       ["code", "SOAP::SOAPString", [0, 1]],
@@ -577,7 +579,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Versions,
+    :class => Client::Model::Versions,
     :schema_name => XSD::QName.new(NsStrata, "versions"),
     :schema_element => [
       ["version", "SOAP::SOAPString[]", [0, nil]]
@@ -585,15 +587,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Values,
+    :class => Client::Model::Values,
     :schema_name => XSD::QName.new(NsStrata, "values"),
     :schema_element => [
-      ["value", "Values::Value[]", [0, nil]]
+      ["value", "Client::Model::Values::Value[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Values::Value,
+    :class => Client::Model::Values::Value,
     :schema_name => XSD::QName.new(NsStrata, "value"),
     :is_anonymous => true,
     :schema_qualified => true,
@@ -607,15 +609,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Entitlements,
+    :class => Client::Model::Entitlements,
     :schema_name => XSD::QName.new(NsStrata, "entitlements"),
     :schema_element => [
-      ["entitlement", "Entitlement[]", [0, nil]]
+      ["entitlement", "Client::Model::Entitlement[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => Entitlement,
+    :class => Client::Model::Entitlement,
     :schema_name => XSD::QName.new(NsStrata, "entitlement"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -634,7 +636,7 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => Error,
+    :class => Client::Model::Error,
     :schema_name => XSD::QName.new(NsStrata, "error"),
     :schema_element => [
       ["code", "SOAP::SOAPString"],
@@ -643,15 +645,15 @@ module ClientModelStrataMappingRegistry
   )
 
   Registry.register(
-    :class => SystemProfiles,
+    :class => Client::Model::SystemProfiles,
     :schema_name => XSD::QName.new(NsStrata, "systemProfiles"),
     :schema_element => [
-      ["systemProfile", "SystemProfile[]", [0, nil]]
+      ["systemProfile", "Client::Model::SystemProfile[]", [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => SystemProfile,
+    :class => Client::Model::SystemProfile,
     :schema_name => XSD::QName.new(NsStrata, "systemProfile"),
     :schema_element => [
       ["createdBy", "SOAP::SOAPString", [0, 1]],
@@ -663,21 +665,21 @@ module ClientModelStrataMappingRegistry
       ["attachmentHash", "SOAP::SOAPString", [0, 1]],
       ["deprecated", "SOAP::SOAPBoolean", [0, 1]],
       ["hash", "SOAP::SOAPString", [0, 1]],
-      ["systemProfileCategory", ["SystemProfileCategory[]", XSD::QName.new(NsStrata, "SystemProfileCategory")], [0, nil]]
+      ["systemProfileCategory", ["Client::Model::SystemProfileCategory[]", XSD::QName.new(NsStrata, "SystemProfileCategory")], [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => SystemProfileCategory,
+    :class => Client::Model::SystemProfileCategory,
     :schema_name => XSD::QName.new(NsStrata, "SystemProfileCategory"),
     :schema_element => [
       ["systemProfileCategoryName", ["SOAP::SOAPString", XSD::QName.new(NsStrata, "SystemProfileCategoryName")], [0, 1]],
-      ["systemProfileCategoryDetails", ["SystemProfileCategoryDetails[]", XSD::QName.new(NsStrata, "SystemProfileCategoryDetails")], [0, nil]]
+      ["systemProfileCategoryDetails", ["Client::Model::SystemProfileCategoryDetails[]", XSD::QName.new(NsStrata, "SystemProfileCategoryDetails")], [0, nil]]
     ]
   )
 
   Registry.register(
-    :class => SystemProfileCategoryDetails,
+    :class => Client::Model::SystemProfileCategoryDetails,
     :schema_name => XSD::QName.new(NsStrata, "SystemProfileCategoryDetails"),
     :schema_element => [
       ["key", "SOAP::SOAPString", [0, 1]],
@@ -685,3 +687,5 @@ module ClientModelStrataMappingRegistry
     ]
   )
 end
+
+end; end
