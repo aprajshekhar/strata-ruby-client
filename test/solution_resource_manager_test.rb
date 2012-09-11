@@ -4,9 +4,9 @@
 $:.unshift File.join(File.dirname(__FILE__),'..','lib')
 
 require 'test/unit'
-require 'solutions_resource_manager'
+require 'client/managers/solutions_resource_manager'
 require 'pp'
-require 'client_config'
+require 'client/client_config'
 require 'logging'
  
 Logging.logger.root.appenders = Logging.appenders.stdout
