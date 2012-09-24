@@ -10,13 +10,13 @@ if Utils::FileUtil.is_new?('client/schema/strata.xsd', 'client/model/strata.rb')
  
   text = File.read("client/model/strata_mapper.rb")
    replaced_text = text.gsub(/require/, 'require_relative') 
-   File.open("client/model/strata_mapper.rb", "w") { |file|
+   File.open("../model/strata_mapper.rb", "w") { |file|
      file.puts replaced_text
       
    }
-  text = File.read("client/model/strata_mapping_registry.rb")
+  text = File.read("/model/strata_mapping_registry.rb")
   
-   replaced_text = text.gsub(/require 'client\/model\/strata.rb'/, "require_relative 'client/model/strata.rb'") 
+   replaced_text = text.gsub(/require 'client\/model\/strata.rb'/, "require_relative '../model/strata.rb'") 
    File.open("client/model/strata_mapping_registry.rb", "w") { |file|
      file.puts replaced_text
       

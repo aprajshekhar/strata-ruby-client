@@ -7,49 +7,53 @@ require 'hashie/mash'
 require 'connection_pool'
 require 'json'
 require 'logging'
-
+require 'xsd/mapping'
+require_relative '../model/strata_mapper.rb'
+require_relative '../model/strata.rb'
 module Client
-  Logging.logger.root.appenders = Logging.appenders.stdout
-  Logging.logger.root.level = :info    
+  module Managers
+    Logging.logger.root.appenders = Logging.appenders.stdout
+    Logging.logger.root.level = :info    
   
-  class ArticlesResourceManager
-    ARTICLES_URI = '/rs/articles/'
+    class ArticlesResourceManager
+      ARTICLES_URI = '/rs/articles/'
     
-    def initialize(url, user, password)
-      rest_url = url+ARTICLES_URI
-      @memcached= ConnectionPool.new(:size=>5, :timeout=>10){
-        RestClient::Resource.new(rest_url,:user=>user, :password=>password, :timeout=>1000 )
-      }
-      @log = Logging.logger[self]          
-    end
-    
-    def get_by_id(article_id, is_published=true)
-      @memcached.with_connection do|site|
-        sub_url = article_id+'/?isPublished='+is_published.to_s
-        @log.info 'sub-url: '+sub_url
-        response = site[sub_url].get :accept=>'application/json'
-        article_str = response.to_s
-        article_hash = ActiveSupport::JSON.decode article_str        
-        article = Hashie::Mash.new(article_hash)
-        return article
+      def initialize(url, user, password)
+        rest_url = url+ARTICLES_URI
+        @memcached= ConnectionPool.new(:size=>5, :timeout=>10){
+          RestClient::Resource.new(rest_url,:user=>user, :password=>password, :timeout=>1000 )
+        }
+        @log = Logging.logger[self]          
+        @mapper = Client::Model::ClientModelStrataMapper.new
       end
-    end
+    
+      def get_by_id(article_id, is_published=true)
+        @memcached.with_connection do|site|
+          sub_url = article_id+'?isPublished='+is_published.to_s
+          @log.info 'sub-url: '+sub_url
+          response = site[sub_url].get :accept=>'application/xml'
+          article_str = response.to_s
+          article = @mapper.xml2obj(article_str);
+          return article
+        end
+      end
      
-    def create(article={})
-      @memcached.with_connection do |site|
-        article_json = article.to_json
-        response = site.post article_json, :content_type=>'application/json', :accept=>'application/json'
-        return response
+      def create(article)
+        @memcached.with_connection do |site|
+          article_xml = @mapper.obj2xml(article)
+          response = site.post article_xml, :content_type=>'application/xml', :accept=>'application/xml'
+          return response
+        end
       end
-    end
     
-     def update(article={}, article_id)
-      @memcached.with_connection do |site|
-        article_json = article.to_json
-        response = site[article_id].put article_json, :content_type=>'application/json', :accept=>'application/json'
-        return response
+      def update(article, article_id)
+        @memcached.with_connection do |site|
+          article_xml = @mapper.obj2xml(article)
+          response = site[article_id].put article_xml, :content_type=>'application/xml', :accept=>'application/xml'
+          return response
+        end
       end
-    end
     
+    end
   end
 end

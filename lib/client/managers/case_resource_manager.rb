@@ -7,7 +7,11 @@ require 'hashie/mash'
 require 'connection_pool'
 require 'json'
 require 'logging'
+require_relative 'client/model/strata'
+require 'client/model/strata_mapper'
 module Client
+  
+  module Managers
 =begin
 = SYNOPSIS
     A wrapper class for a Case resource.
@@ -26,20 +30,20 @@ module Client
     2. Call the required method e.g. kase = manager.get_by_id('00123000')
     3. The objects returned by get and list methods are Hashie objects i.e. hashes that can be used as objects
 =end
- Logging.logger.root.appenders = Logging.appenders.stdout
- Logging.logger.root.level = :info         
+    Logging.logger.root.appenders = Logging.appenders.stdout
+    Logging.logger.root.level = :info         
 
-  class CaseResourceManager
-    CASE_URI = '/rs/cases/'
-    COMMENTS_URI = '/comments/'
+    class CaseResourceManager
+      CASE_URI = '/rs/cases/'
+      COMMENTS_URI = '/comments/'
     
-    def initialize(url, user, password)
-      rest_url = url+CASE_URI
-      @memcached= ConnectionPool.new(:size=>5, :timeout=>10){
-        RestClient::Resource.new(rest_url,:user=>user, :password=>password, :timeout=>1000 )
-      }
-      @log = Logging.logger[self]
-    end
+      def initialize(url, user, password)
+        rest_url = url+CASE_URI
+        @memcached= ConnectionPool.new(:size=>5, :timeout=>10){
+          RestClient::Resource.new(rest_url,:user=>user, :password=>password, :timeout=>1000 )
+        }
+        @log = Logging.logger[self]
+      end
 
 =begin
 = SYNOPSIS
@@ -47,17 +51,17 @@ module Client
  
 =end    
     
-    def get_by_id(id)
-      @memcached.with_connection do |site|
-        response = site[id].get :accept=>'application/json'
-        case_str = response.to_s
-        kase_hash = ActiveSupport::JSON.decode case_str
+      def get_by_id(id)
+        @memcached.with_connection do |site|
+          response = site[id].get :accept=>'application/json'
+          case_str = response.to_s
+          kase_hash = ActiveSupport::JSON.decode case_str
         
-        kase = Hashie::Mash.new(kase_hash)
-        return kase
+          kase = Hashie::Mash.new(kase_hash)
+          return kase
         
+        end
       end
-    end
 =begin
 = SYNOPSIS
  Returns list of cases based on  <code>options/code>   
@@ -68,156 +72,157 @@ module Client
  4. group (values can be ALL, NONE OR the ID of the group)
  5. details (values can be true/false)
 =end   
-    def list(options={}, csv_output=false)
-      @memcached.with_connection do |site|
-        query_param = build_query_param(options)
-        if csv_output == true
-          accept = 'text/csv'
-        else
-          accept = 'application/json'
+      def list(options={}, csv_output=false)
+        @memcached.with_connection do |site|
+          query_param = build_query_param(options)
+          if csv_output == true
+            accept = 'text/csv'
+          else
+            accept = 'application/json'
+          end
+        
+          @log.info 'query param:'+query_param
+          @log.info 'accept: '+ accept
+        
+          response = site[query_param].get :accept=>accept
+        
+          case_str = response.to_s
+        
+          unless csv_output == true
+            kase_hash = ActiveSupport::JSON.decode case_str
+            kases = Hashie::Mash.new(kase_hash)
+            return kases
+          else
+            return case_str
+          end
+        
         end
+      end
+    
+      def create(kase={})
+        @memcached.with_connection do |site|
+          str = kase.to_json
+          puts str
+          response = site.post str, :content_type=>'application/json', :accept=>'application/xml'
+          return response
         
-        @log.info 'query param:'+query_param
-        @log.info 'accept: '+ accept
+        end
+      end
+    
+      def update(kase={}, id)
+        @memcached.with_connection do |site|
+          str = kase.to_json
+          puts str
+          response = site[id].put str, :content_type=>'application/json', :accept=>'application/xml'
+          return response
         
-        response = site[query_param].get :accept=>accept
+        end
+      end
+    
+      def add_comment(comment={}, case_id)
+        @memcached.with_connection do |site|
+          str = comment.to_json
+          response = site[case_id+COMMENTS_URI].post str, :content_type=>'application/json', :accept=>'application/json'
+          return response
         
-        case_str = response.to_s
+        end
+      end
+    
+      def update_comment(comment={}, case_id,comment_id)
+        @memcached.with_connection do |site|
+          str = comment.to_json
+          response = site[case_id+COMMENTS_URI+comment_id].post str, :content_type=>'application/json', :accept=>'application/json'
+          return response
         
-        unless csv_output == true
+        end
+      end
+    
+      def set_comment_public(case_id, comment_id)
+        @memcached.with_connection do |site|
+          str = comment.to_json
+          response = site[case_id+COMMENTS_URI+comment_id+'/status'].post str, :content_type=>'application/json', :accept=>'application/json'
+          return response
+        
+        end
+      end
+    
+      def list_comments(options={}, case_no)
+        @memcached.with_connection do |site|
+          query_param = build_query_param(options, true)
+         
+          puts 'query param:'+query_param
+         
+         
+          response = site[case_no+COMMENTS_URI+query_param].get :accept=>'application/json'
+         
+          case_str = response.to_s
           kase_hash = ActiveSupport::JSON.decode case_str
           kases = Hashie::Mash.new(kase_hash)
           return kases
-        else
-          return case_str
-        end
-        
-      end
-    end
-    
-    def create(kase={})
-      @memcached.with_connection do |site|
-        str = kase.to_json
-        puts str
-        response = site.post str, :content_type=>'application/json', :accept=>'application/xml'
-        return response
-        
-      end
-    end
-    
-    def update(kase={}, id)
-      @memcached.with_connection do |site|
-        str = kase.to_json
-        puts str
-        response = site[id].put str, :content_type=>'application/json', :accept=>'application/xml'
-        return response
-        
-      end
-    end
-    
-    def add_comment(comment={}, case_id)
-      @memcached.with_connection do |site|
-        str = comment.to_json
-        response = site[case_id+COMMENTS_URI].post str, :content_type=>'application/json', :accept=>'application/json'
-        return response
-        
-      end
-    end
-    
-    def update_comment(comment={}, case_id,comment_id)
-      @memcached.with_connection do |site|
-        str = comment.to_json
-        response = site[case_id+COMMENTS_URI+comment_id].post str, :content_type=>'application/json', :accept=>'application/json'
-        return response
-        
-      end
-    end
-    
-    def set_comment_public(case_id, comment_id)
-      @memcached.with_connection do |site|
-        str = comment.to_json
-        response = site[case_id+COMMENTS_URI+comment_id+'/status'].post str, :content_type=>'application/json', :accept=>'application/json'
-        return response
-        
-      end
-    end
-    
-    def list_comments(options={}, case_no)
-      @memcached.with_connection do |site|
-        query_param = build_query_param(options, true)
-         
-        puts 'query param:'+query_param
-         
-         
-        response = site[case_no+COMMENTS_URI+query_param].get :accept=>'application/json'
-         
-        case_str = response.to_s
-        kase_hash = ActiveSupport::JSON.decode case_str
-        kases = Hashie::Mash.new(kase_hash)
-        return kases
              
          
+        end
       end
-    end
     
-    def add_attachment(case_no,attachment_path, is_private=false )
-      @memcached.with_connection do |site|
-        response = site[case_no+'/attachments'].post :file => File.new(attachment_path, 'rb'), :accept=>'application/json'
-        return response
-      end
+      def add_attachment(case_no,attachment_path, is_private=false )
+        @memcached.with_connection do |site|
+          response = site[case_no+'/attachments'].post :file => File.new(attachment_path, 'rb'), :accept=>'application/json'
+          return response
+        end
       
-    end
-    
-    def get_attachment(case_no,uuid )
-      @memcached.with_connection do |site|
-        response = site[case_no+'/attachments/'+uuid].get :accept=>'application/octet-stream'
-        return response
       end
+    
+      def get_attachment(case_no,uuid )
+        @memcached.with_connection do |site|
+          response = site[case_no+'/attachments/'+uuid].get :accept=>'application/octet-stream'
+          return response
+        end
       
-    end
-    
-    def list_attachments(options={},case_no)
-      @memcached.with_connection do |site|
-        query_param = build_query_param(options)
-         
-        @log.info 'query param:'+query_param         
-         
-        response = site[case_no+'/attachments'+query_param].get :accept=>'application/json'
-         
-        attachments_str = response.to_s
-        attachments_hash = ActiveSupport::JSON.decode attachments_str
-        attachments = Hashie::Mash.new(attachments_hash)
-        return attachments            
-         
       end
-    end
     
-    private
-    def build_query_param(options={}, for_comments=false)
-      query_param = ''
+      def list_attachments(options={},case_no)
+        @memcached.with_connection do |site|
+          query_param = build_query_param(options)
+         
+          @log.info 'query param:'+query_param         
+         
+          response = site[case_no+'/attachments'+query_param].get :accept=>'application/json'
+         
+          attachments_str = response.to_s
+          attachments_hash = ActiveSupport::JSON.decode attachments_str
+          attachments = Hashie::Mash.new(attachments_hash)
+          return attachments            
+         
+        end
+      end
+    
+      private
+      def build_query_param(options={}, for_comments=false)
+        query_param = ''
 
-      query_param = '?group='+options[:group][:param] unless options[:group].nil?
-      query_param = '?detail='+options[:detail] unless options[:detail].nil?      
+        query_param = '?group='+options[:group][:param] unless options[:group].nil?
+        query_param = '?detail='+options[:detail] unless options[:detail].nil?      
       
-      if for_comments
-        #noting to be done at present
-      else
-        unless options[:start_date].nil? || options[:end_date].nil?
-          query_param = '?startDate='+options[:start_date] + '&endDate='+options[:end_date]
+        if for_comments
+          #noting to be done at present
         else
-          query_param = '?startDate='+options[:start_date] unless options[:start_date].nil? 
-          query_param = '?endDate='+options[:end_date] unless options[:end_date].nil?   
-        end   
-      end  
+          unless options[:start_date].nil? || options[:end_date].nil?
+            query_param = '?startDate='+options[:start_date] + '&endDate='+options[:end_date]
+          else
+            query_param = '?startDate='+options[:start_date] unless options[:start_date].nil? 
+            query_param = '?endDate='+options[:end_date] unless options[:end_date].nil?   
+          end   
+        end  
         
       
 
-      query_param = '?includeClosed='+options[:include_closed] unless options[:include_closed].nil?
-      query_param = '?query='+options[:query] unless options[:q].nil?
+        query_param = '?includeClosed='+options[:include_closed] unless options[:include_closed].nil?
+        query_param = '?query='+options[:query] unless options[:q].nil?
       
-      return query_param
-    end
+        return query_param
+      end
 
+    end
   end
 end
 

@@ -18,7 +18,7 @@ class CaseResourceManagerTest < Test::Unit::TestCase
     path = File.absolute_path('test_config.yml')
     config = Client::ClientConfig.new(path,'local')
         
-    @manager = Client::CaseResourceManager.new(config.url, config.user, config.password)
+    @manager = Client::Managers::CaseResourceManager.new(config.url, config.user, config.password)
     @log = Logging.logger[self]
   end
   def test_get_by_id
