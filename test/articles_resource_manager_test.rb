@@ -24,22 +24,22 @@ class ArticlesResourceManagerTest < Test::Unit::TestCase
     @log = Logging.logger[self]
   end
   
-#  def test_get_by_id
-#    @log.info 'Get by ID test'
-#    article = @manager.get_by_id('206503',false)
-#    assert_equal('206503', article.id, 'Test by id failed for id=206503')
-#  end
-#    
-#  def test_create_article
-#    @log.info 'Create article'
-#    article = Client::Model::Article.new
-#    article.title = "Created from Ruby"
-#    article.body = "Create from ruby"
-#    article.kcsState="wip"
-#    response = @manager.create article    
-#    assert_equal(201, response.code, 'not created')
-#              
-#  end
+  def test_get_by_id
+    @log.info 'Get by ID test'
+    article = @manager.get_by_id('206503',false)
+    assert_equal('206503', article.id, 'Test by id failed for id=206503')
+  end
+    
+  def test_create_article
+    @log.info 'Create article'
+    article = Client::Model::Article.new
+    article.title = "Created from Ruby"
+    article.body = "Create from ruby"
+    article.kcsState="wip"
+    response = @manager.create article    
+    assert_equal(201, response.code, 'not created')
+              
+  end
   
   def test_update_article
     @log.info 'Update article'
@@ -47,7 +47,7 @@ class ArticlesResourceManagerTest < Test::Unit::TestCase
     article.title ="Updated from ruby"
     article.body = "Updated from ruby client"
     response = @manager.update(article, '206513')
-    assert_equal(202, response.code, 'not updated')
+    assert_equal(200, response.code, 'not updated')
               
   end
   

@@ -8,7 +8,8 @@ require 'client/managers/solutions_resource_manager'
 require 'pp'
 require 'client/client_config'
 require 'logging'
- 
+require 'client/model/strata'
+
 Logging.logger.root.appenders = Logging.appenders.stdout
 Logging.logger.root.level = :info  
 
@@ -39,8 +40,12 @@ class SolutionResourceManagerTest < Test::Unit::TestCase
   
   def test_create_solution
     @log.info 'Create solution'
-    solution = {:title=>'solution created from ruby',
-      :kcs_state=>'wip'}
+    solution = Client::Model::Solution.new
+    solution.title = 'Created from ruby'
+    solution.kcsState = 'wip'
+    environment = Client::Model::Solution::Environment.new
+    environment.text = "test environment"
+    solution.environment = environment
     response = @manager.create solution
     assert_equal(201, response.code, 'not created')
               
@@ -48,10 +53,14 @@ class SolutionResourceManagerTest < Test::Unit::TestCase
   
   def test_update_solution
     @log.info 'Update solution'
-    solution = {:title=>'solution updated from ruby',
-      :kcs_state=>'wip'}
+    solution = Client::Model::Solution.new
+    solution.title = 'Updated from ruby'
+    solution.kcsState = 'wip'
+    environment = Client::Model::Solution::Environment.new
+    environment.text = "test environment"
+    solution.environment = environment
     response = @manager.update(solution, '201193')
-    assert_equal(202, response.code, 'not updated')
+    assert_equal(200, response.code, 'not updated')
               
   end
   
