@@ -56,7 +56,10 @@ class CaseResourceManagerTest < Test::Unit::TestCase
   
   def test_create
     @log.info 'test create'
-    kase = {:summary=>'test case from ruby', :product=>'Red Hat Enterprise Linux',:version=>'6.0'}
+    kase = Client::Model::Case.new
+    kase.summary = 'test case from ruby'
+    kase.product = 'Red Hat Enterprise Linux'
+    kase.version = '6.0'
     response = @manager.create kase
     @log.info 'status'+response.code.to_s
     assert_equal(201, response.code, 'not created')
@@ -65,9 +68,10 @@ class CaseResourceManagerTest < Test::Unit::TestCase
   
   def test_create_comment
     @log.info 'test create comment'
-    comment = {:text=>'test comment from ruby'}
+    comment = Client::Model::Comment.new
+    comment.text = 'test comment from ruby'
     response = @manager.add_comment(comment,'00722685')
-     assert_equal(201, response.code, 'not created')
+    assert_equal(201, response.code, 'not created')
     @log.info 'status'+response.code.to_s
   end
   

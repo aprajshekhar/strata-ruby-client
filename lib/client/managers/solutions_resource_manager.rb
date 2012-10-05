@@ -1,11 +1,9 @@
 # To change this template, choose Tools | Templates
 # and open the template in the editor.
+
 require 'rest_client'
 require 'pp'
-require 'active_support'
-require 'hashie/mash'
 require 'connection_pool'
-require 'json'
 require 'logging'
 require_relative '../model/strata_mapper.rb'
 require_relative '../model/strata.rb'

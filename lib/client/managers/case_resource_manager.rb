@@ -7,8 +7,8 @@ require 'hashie/mash'
 require 'connection_pool'
 require 'json'
 require 'logging'
-require_relative 'client/model/strata'
-require 'client/model/strata_mapper'
+require_relative '../model/strata'
+require_relative '../model/strata_mapper'
 module Client
   
   module Managers
@@ -43,6 +43,7 @@ module Client
           RestClient::Resource.new(rest_url,:user=>user, :password=>password, :timeout=>1000 )
         }
         @log = Logging.logger[self]
+        @mapper = Client::Model::ClientModelStrataMapper.new
       end
 
 =begin
@@ -53,11 +54,9 @@ module Client
     
       def get_by_id(id)
         @memcached.with_connection do |site|
-          response = site[id].get :accept=>'application/json'
+          response = site[id].get :accept=>'application/xml'
           case_str = response.to_s
-          kase_hash = ActiveSupport::JSON.decode case_str
-        
-          kase = Hashie::Mash.new(kase_hash)
+          kase = @mapper.xml2obj(case_str)
           return kase
         
         end
@@ -78,7 +77,7 @@ module Client
           if csv_output == true
             accept = 'text/csv'
           else
-            accept = 'application/json'
+            accept = 'application/xml'
           end
         
           @log.info 'query param:'+query_param
@@ -89,8 +88,7 @@ module Client
           case_str = response.to_s
         
           unless csv_output == true
-            kase_hash = ActiveSupport::JSON.decode case_str
-            kases = Hashie::Mash.new(kase_hash)
+            kases = @mapper.xml2obj(case_str)
             return kases
           else
             return case_str
@@ -99,45 +97,45 @@ module Client
         end
       end
     
-      def create(kase={})
+      def create(kase)
         @memcached.with_connection do |site|
-          str = kase.to_json
+          str = @mapper.obj2xml(kase)
           puts str
-          response = site.post str, :content_type=>'application/json', :accept=>'application/xml'
+          response = site.post str, :content_type=>'application/xml', :accept=>'application/xml'
           return response
         
         end
       end
     
-      def update(kase={}, id)
+      def update(kase, id)
         @memcached.with_connection do |site|
-          str = kase.to_json
+          str = @mapper.obj2xml(kase)
           puts str
-          response = site[id].put str, :content_type=>'application/json', :accept=>'application/xml'
+          response = site[id].put str, :content_type=>'application/xml', :accept=>'application/xml'
           return response
         
         end
       end
     
-      def add_comment(comment={}, case_id)
+      def add_comment(comment, case_id)
         @memcached.with_connection do |site|
-          str = comment.to_json
-          response = site[case_id+COMMENTS_URI].post str, :content_type=>'application/json', :accept=>'application/json'
+          str = @mapper.xml2obj(comment)
+          response = site[case_id+COMMENTS_URI].post str, :content_type=>'application/xml', :accept=>'application/xml'
           return response
         
         end
       end
     
-      def update_comment(comment={}, case_id,comment_id)
+      def update_comment(comment, case_id,comment_id)
         @memcached.with_connection do |site|
-          str = comment.to_json
-          response = site[case_id+COMMENTS_URI+comment_id].post str, :content_type=>'application/json', :accept=>'application/json'
+          str = @mapper.obj2xml(comment)
+          response = site[case_id+COMMENTS_URI+comment_id].post str, :content_type=>'application/xml', :accept=>'application/xml'
           return response
         
         end
       end
     
-      def set_comment_public(case_id, comment_id)
+      def set_comment_public(comment, case_id, comment_id)
         @memcached.with_connection do |site|
           str = comment.to_json
           response = site[case_id+COMMENTS_URI+comment_id+'/status'].post str, :content_type=>'application/json', :accept=>'application/json'

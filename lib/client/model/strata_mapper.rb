@@ -1,4 +1,4 @@
-require_relative '../model/strata_mapping_registry.rb'
+require 'client/model/strata_mapping_registry.rb'
 
 module Client; module Model
 

@@ -1,5 +1,5 @@
 require 'xsd/mapping'
-require_relative '../model/strata.rb'
+require 'client/model/strata.rb'
 
 module Client; module Model
 
